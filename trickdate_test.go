@@ -1,6 +1,9 @@
 package trickdate
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 const (
 	checkMark = "\u2713"
@@ -113,16 +116,38 @@ func TestFormatDate(t *testing.T) {
 		valueTested string
 		expected    string
 	}{
-		{"31/12/2017", "20171231"},
-		{"31 12 2017", "20171231"},
-		{"31-12-2017", "20171231"},
-		{"31122017", "20171231"},
-		{"31      12     2017", "20171231"},
-		{"31/////12/////2017", "20171231"},
-		{"19-05-1981", "19810519"},
+		{"31/12/2017", "2017-12-31"},
+		{"31 12 2017", "2017-12-31"},
+		{"31-12-2017", "2017-12-31"},
+		{"31122017", "2017-12-31"},
+		{"31      12     2017", "2017-12-31"},
+		{"31/////12/////2017", "2017-12-31"},
+		{"19-05-1981", "1981-05-19"},
 	} {
 		t.Logf("#%d Conversion date of %s should return %v: ", i, v.valueTested, v.expected)
 		got := FormatDate(v.valueTested)
+		if got != v.expected {
+			t.Fatal(ballotX)
+		}
+		t.Log(checkMark)
+	}
+}
+
+func TestConvertDate(t *testing.T) {
+	for i, v := range []struct {
+		valueTested string
+		expected    time.Time
+	}{
+		{"2017-12-31", time.Date(2017, 12, 31, 3, 0, 0, 0, time.UTC)},
+		{"1900-12-31", time.Date(1900, 12, 31, 3, 0, 0, 0, time.UTC)},
+		{"1968-09-25", time.Date(1968, 9, 25, 3, 0, 0, 0, time.UTC)},
+		{"1981-09-08", time.Date(1981, 9, 8, 3, 0, 0, 0, time.UTC)},
+		{"1991-09-02", time.Date(1991, 9, 2, 3, 0, 0, 0, time.UTC)},
+		{"1982-11-16", time.Date(1982, 11, 16, 3, 0, 0, 0, time.UTC)},
+		{"1981-05-19", time.Date(1981, 5, 19, 3, 0, 0, 0, time.UTC)},
+	} {
+		t.Logf("#%d Conversion date of %s should return %v: ", i, v.valueTested, v.expected)
+		got := ConvertDate(v.valueTested)
 		if got != v.expected {
 			t.Fatal(ballotX)
 		}

@@ -2,6 +2,7 @@ package trickdate
 
 import (
 	"regexp"
+	"time"
 )
 
 var recleanDate, reDate, reDateFull *regexp.Regexp
@@ -10,7 +11,6 @@ var recleanDate, reDate, reDateFull *regexp.Regexp
 Date format accepted: dd/mm/yyyy without requiring separator character
 * */
 func init() {
-	//reDate = regexp.MustCompile(`^(0[1-9]|[12][0-9]|3[01])[-|\\|/|\s]*(0[1-9]|1[012])[-|\\|/|\s]*(?:19|20)\d{2}?$`)
 	reDate = regexp.MustCompile(`^(0[1-9]|[12][0-9]|3[01])[-|\\|/|\s]*(0[1-9]|1[012])[-|\\|/|\s]*(19|20)(\d{2})$`)
 	reDateFull = regexp.MustCompile(`^(0[1-9]|[12][0-9]|3[01])[-|\\|/|\s]*(0[1-9]|1[012])[-|\\|/|\s]*\d{4}?$`)
 	recleanDate = regexp.MustCompile(`\D`)
@@ -31,7 +31,7 @@ func cleanDate(date string) string {
 	return recleanDate.ReplaceAllString(date, "")
 }
 
-//Reverse the order ddmmaaaa to aaaammdd
+//Reverse the order ddmmaaaa to aaaa-mm-dd
 func FormatDate(date string) string {
 	var day, month, year string
 	var datePieces []string
@@ -39,11 +39,23 @@ func FormatDate(date string) string {
 	datePieces = reDate.FindStringSubmatch(cleanDate(date))
 	if datePieces != nil {
 		day = datePieces[1]
-		month = datePieces[2]
-		year = datePieces[3] + datePieces[4]
+		month = datePieces[2] + "-"
+		year = datePieces[3] + datePieces[4] + "-"
 	} else {
 		return ""
 	}
 
 	return year + month + day
+}
+
+//Converts string data to RFC3339 time
+func ConvertDate(date string) time.Time {
+	var dt time.Time
+	var err error
+
+	dt, err = time.Parse(time.RFC3339, date+"T03:00:00.000Z")
+	if err != nil {
+		return dt
+	}
+	return dt
 }
