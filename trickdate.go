@@ -59,3 +59,21 @@ func ConvertDate(date string) time.Time {
 	}
 	return dt
 }
+
+//Converts time.Now() to RFC3339 time
+func ConvertDateNow() time.Time {
+	var dt time.Time
+	var err error
+	var date string
+
+	dt = time.Now()
+	date = dt.String()
+	//Get aaaa-mm-dd
+	date = date[0:10] + "T03:00:00.000Z"
+
+	dt, err = time.Parse(time.RFC3339, date)
+	if err != nil {
+		return dt
+	}
+	return dt
+}
