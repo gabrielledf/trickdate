@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-var recleanDate, reDate, reDateFull *regexp.Regexp
+var recleanDate, reDate, reDateFull, reHasDate, reHasDateFull *regexp.Regexp
 
 /*Func to starts regexp
 Date format accepted: dd/mm/yyyy without requiring separator character
@@ -14,6 +14,9 @@ func init() {
 	reDate = regexp.MustCompile(`^(0[1-9]|[12][0-9]|3[01])[-|\\|/|\s]*(0[1-9]|1[012])[-|\\|/|\s]*(19|20)(\d{2})$`)
 	reDateFull = regexp.MustCompile(`^(0[1-9]|[12][0-9]|3[01])[-|\\|/|\s]*(0[1-9]|1[012])[-|\\|/|\s]*\d{4}?$`)
 	recleanDate = regexp.MustCompile(`\D`)
+
+	reHasDate = regexp.MustCompile(`(0[1-9]|[12][0-9]|3[01])[-|\\|/|\s]*(0[1-9]|1[012])[-|\\|/|\s]*(19|20)(\d{2})`)
+	reHasDateFull = regexp.MustCompile(`(0[1-9]|[12][0-9]|3[01])[-|\\|/|\s]*(0[1-9]|1[012])[-|\\|/|\s]*\d{4}?`)
 }
 
 //Verifies if the string is a valid date - year between 1900-2099
@@ -24,6 +27,16 @@ func IsDate(date string) bool {
 //Verifies if the string is a valid date
 func IsDateFull(date string) bool {
 	return reDateFull.MatchString(date)
+}
+
+//Verifies if the string has a valid date - year between 1900-2099
+func HasDate(date string) bool {
+	return reHasDate.MatchString(date)
+}
+
+//Verifies if the string has a valid date
+func HasDateFull(date string) bool {
+	return reHasDateFull.MatchString(date)
 }
 
 //Removes non-numeric characters
